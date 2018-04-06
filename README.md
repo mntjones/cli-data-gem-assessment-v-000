@@ -1,4 +1,4 @@
-atom# Build a CLI Application with External Data
+# Build a CLI Application with External Data
 
 ## Overview
 

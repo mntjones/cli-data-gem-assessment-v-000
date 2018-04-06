@@ -45,44 +45,84 @@ class Restaurant
 		doc = Nokogiri::HTML(open("https://sf.eater.com/maps/best-new-restaurants-san-francisco-oakland-berkeley-heatmap"))
 		
 		list = doc.css(".c-mapstack__cards")
-    holding = []
 
-
-    # See above method for this issue
-    number = list.css(".c-mapstack__card-index").text
-    names = list.css(".c-mapstack__card-index span").text
+    #address[0].children.text = "address"
+    #address[1].children.text = "phone \n"
     
-    
-    # this grabs ALL the blurbs - how to split up?
-    blurb = list.css(".c-entry-content").text
-    blurbs = blurb.split("\n")
-    
-    blurb_hold = []
-    blurbs.collect do |entry|
-     blurb_hold << entry.strip
-    end
-    
-    blurb_hold.reject!(&:empty?)
-    #Ahhhhh, need to get rid of promotional blurbs! - do have each item as a blurb!
-    
-    # Has all addresses AND phone numbers - each line item has one address and one phone number. 
-    
-    address = list.css(".c-mapstack__address").text
-    addresses = address.split("\n")
+    address = list.css(".c-mapstack__address")
     adds = []
     phones = []
+    hold_add = []
+
+    address.each do |add|
+      if add.children.text != nil
+        hold_add << add
+      end
+    end
+	
+	  hold_add.each.with_index do |info, i|
+	    if info.text != nil
+	      adds << info.text
+	    end
+	  end
+		
+	# all info separated, but how to match address to ph number when one doesn't have a phone?
+	
+	
+		
+  # For restaurant names
+    hold_name = []
+    hold_blurb = []
+		cards = list.css("h2")
+		blurb = list.css(".c-entry-content")
+		
+		cards.each do |sect|
+		  if sect.css("h2 .c-mapstack__card-index").text != nil
+		    hold_name << sect
+		  end
+		end
+		
+		
+		names = []
+		
+		hold_name.each.with_index do |name, index|
+		  binding.pry
+		  if name.children[2] != nil
+		    names << name.children[2].text
+
+		  end
+		end
+		
+		
+		# the array "names" holds the restaurant names
+
+    
     hold = []
     
-    addresses.each.with_index do |line, i|
-      hold = line.split(/(?=\()/)
-      adds << hold[0]
-      phones << hold[1]
-    end
-      
+    # For info blurbs
+    #blurb = list.css(".c-entry-content")
+	  
+	  list.each do |sect|
+	    if sect.css(".c-mapstack__card-index") == nil
+	      hold_blurb << ""
+	    else
+		    # if sect.css(".c-entry-content ").children != nil
+		      
+		      
+		      hold_blurb << sect.children.text
+		    #end
+		  end
+		end
     
-    binding.pry
-    hold = {}
+		 
 	end
+
+    # blurb[1].children.text - first blurb
+    
+    #Ahhhhh, need to get rid of promotional blurbs! - do have each item as a blurb!
+    
+    #binding.pry
+
 	
 end
 
